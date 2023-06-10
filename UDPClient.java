@@ -8,8 +8,8 @@ import java.util.zip.CRC32;
 
 public class UDPClient {
     private static final int PACKET_SIZE = 300;
-    private static final int TIMEOUT = 2000; // Timeout em milissegundos
-    private static final int WINDOW_SIZE = 4; // Tamanho da janela de congestionamento
+    private static final int TIMEOUT = 2000;      //timeout em milissegundos
+    private static final int WINDOW_SIZE = 4;     //tamanho da janela de congestionamento
 
     private static DatagramSocket clientSocket;
     private static InetAddress serverAddress;
@@ -18,8 +18,9 @@ public class UDPClient {
     private static int ackNumber;
 
     public static void main(String[] args) throws Exception {
+
         if (args.length != 3) {
-            System.out.println("Uso correto: java UDPClient <arquivo> <endereço IP> <porta>");
+            System.out.println("Expected: java UDPClient <file name> <ip address> <server port>");
             return;
         }
 
@@ -32,7 +33,7 @@ public class UDPClient {
 
         File file = new File(fileName);
         if (!file.exists()) {
-            System.out.println("Arquivo não encontrado.");
+            System.out.println("File not found.");
             return;
         }
 
@@ -43,10 +44,10 @@ public class UDPClient {
 
         int totalPackets = (int) Math.ceil((double) fileData.length / PACKET_SIZE);
 
-        System.out.println("Iniciando transferência do arquivo " + fileName + " para " +
+        System.out.println("Starting file transfer " + fileName + " to " +
                 serverAddress.getHostAddress() + ":" + serverPort);
-        System.out.println("Tamanho do arquivo: " + fileData.length + " bytes");
-        System.out.println("Total de pacotes a serem enviados: " + totalPackets);
+        System.out.println("File size: " + fileData.length + " bytes");
+        System.out.println("Total number of packets to be sent: " + totalPackets);
 
         long startTime = System.currentTimeMillis();
 
@@ -68,9 +69,9 @@ public class UDPClient {
                 clientSocket.send(sendPacket);
 
                 packetsSent++;
-                System.out.println("Enviado pacote " + packetsSent + "/" + totalPackets);
+                System.out.println("Packet sent " + packetsSent + "/" + totalPackets);
 
-                // Thread.sleep(100); // Aguarda um curto período para visualizar a troca de mensagens
+                Thread.sleep(100); //aguarda um curto período para visualizar a troca de mensagens
             }
 
             try {
@@ -80,20 +81,20 @@ public class UDPClient {
 
                 if (validateChecksum(receiveData)) {
                     packetsReceived++;
-                    System.out.println("Recebido ACK " + packetsReceived + "/" + totalPackets);
+                    System.out.println("ACK Received " + packetsReceived + "/" + totalPackets);
                 } else {
-                    System.out.println("Erro no pacote recebido. Descartado.");
+                    System.out.println("Error in received packet. Discarded.");
                 }
             } catch (SocketTimeoutException e) {
-                System.out.println("Timeout. Reenviando pacotes...");
+                System.out.println("Timeout. Resending packets...");
                 packetsSent = packetsReceived;
             }
         }
 
         long endTime = System.currentTimeMillis();
 
-        System.out.println("Transferência concluída em " + (endTime - startTime) + " ms");
-        System.out.println("Arquivo enviado com sucesso.");
+        System.out.println("Transfer completed on " + (endTime - startTime) + " ms");
+        System.out.println("File sent successfully.");
 
         clientSocket.close();
     }

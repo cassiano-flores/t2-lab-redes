@@ -4,6 +4,7 @@ import java.net.InetAddress;
 import java.util.zip.CRC32;
 
 public class UDPServer {
+
     private static final int PACKET_SIZE = 300;
     private static final int WINDOW_SIZE = 4;
 
@@ -14,6 +15,7 @@ public class UDPServer {
     private static int ackNumber;
 
     public static void main(String[] args) throws Exception {
+
         serverSocket = new DatagramSocket(9876);
 
         byte[] receiveData = new byte[PACKET_SIZE];
@@ -38,12 +40,12 @@ public class UDPServer {
                 if (sequenceNumber == expectedSequenceNumber) {
                     String message = new String(messageData);
                     if (message.equals("FIN")) {
-                        System.out.println("Cliente " + clientAddress + ":" + clientPort +
-                                " solicitou encerramento da conexão.");
+                        System.out.println("Client " + clientAddress + ":" + clientPort +
+                                " requested termination of connection.");
                         break;
                     }
 
-                    System.out.println("Mensagem recebida: " + message);
+                    System.out.println("Received message: " + message);
 
                     String ackMsg = "ACK:" + (ackNumber + 1);
                     byte[] ackData = addChecksum(ackMsg.getBytes());
@@ -56,7 +58,7 @@ public class UDPServer {
 
                     Thread.sleep(100);
                 } else {
-                    System.out.println("Pacote fora de ordem. Descartado.");
+                    System.out.println("Packet out of order. Discarded");
 
                     String ackMsg = "ACK:" + (ackNumber + 1);
                     byte[] ackData = addChecksum(ackMsg.getBytes());
@@ -67,7 +69,7 @@ public class UDPServer {
                     Thread.sleep(100);
                 }
             } else {
-                System.out.println("Erro no pacote recebido. Descartado.");
+                System.out.println("Error in received packet. Discarded.");
             }
         }
 
