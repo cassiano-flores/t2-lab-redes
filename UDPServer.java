@@ -5,7 +5,7 @@ import java.util.zip.CRC32;
 
 public class UDPServer {
     private static final int PACKET_SIZE = 300;
-    private static final int WINDOW_SIZE = 4; // Tamanho da janela de congestionamento
+    private static final int WINDOW_SIZE = 4;
 
     private static DatagramSocket serverSocket;
     private static InetAddress clientAddress;
@@ -54,7 +54,7 @@ public class UDPServer {
                     expectedSequenceNumber++;
                     ackNumber++;
 
-                    Thread.sleep(100); // Aguarda um curto período para visualizar a troca de mensagens
+                    Thread.sleep(100);
                 } else {
                     System.out.println("Pacote fora de ordem. Descartado.");
 
@@ -64,7 +64,7 @@ public class UDPServer {
                     DatagramPacket ackPacket = new DatagramPacket(ackData, ackData.length, clientAddress, clientPort);
                     serverSocket.send(ackPacket);
 
-                    Thread.sleep(100); // Aguarda um curto período para visualizar a troca de mensagens
+                    Thread.sleep(100);
                 }
             } else {
                 System.out.println("Erro no pacote recebido. Descartado.");
@@ -81,7 +81,7 @@ public class UDPServer {
 
         byte[] checksumBytes = new byte[8];
         for (int i = 0; i < 8; i++) {
-            checksumBytes[i] = (byte) (checksum >>> (i * 8));
+            checksumBytes[i] = (byte) (checksum >>> ((7 - i) * 8));
         }
 
         byte[] newData = new byte[data.length + 8];
@@ -101,7 +101,7 @@ public class UDPServer {
 
         long receivedChecksum = 0;
         for (int i = 0; i < 8; i++) {
-            receivedChecksum |= (long) (checksumBytes[i] & 0xFF) << (i * 8);
+            receivedChecksum |= (long) (checksumBytes[i] & 0xFF) << ((7 - i) * 8);
         }
 
         return checksum == receivedChecksum;
@@ -113,7 +113,7 @@ public class UDPServer {
 
         int sequenceNumber = 0;
         for (int i = 0; i < 4; i++) {
-            sequenceNumber |= (data[i] & 0xFF) << (i * 8);
+            sequenceNumber |= (data[i] & 0xFF) << ((3 - i) * 8);
         }
 
         return sequenceNumber;

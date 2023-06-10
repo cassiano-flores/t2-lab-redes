@@ -70,7 +70,7 @@ public class UDPClient {
                 packetsSent++;
                 System.out.println("Enviado pacote " + packetsSent + "/" + totalPackets);
 
-                Thread.sleep(100); // Aguarda um curto período para visualizar a troca de mensagens
+                // Thread.sleep(100); // Aguarda um curto período para visualizar a troca de mensagens
             }
 
             try {
@@ -80,7 +80,7 @@ public class UDPClient {
 
                 if (validateChecksum(receiveData)) {
                     packetsReceived++;
-                    System.out.println("Recebido ACK " + (packetsReceived + 1) + "/" + totalPackets);
+                    System.out.println("Recebido ACK " + packetsReceived + "/" + totalPackets);
                 } else {
                     System.out.println("Erro no pacote recebido. Descartado.");
                 }
